@@ -248,6 +248,7 @@ export default function HomePage() {
             error={error}
             onRetry={handleRetry}
             serviceName={selectedServiceInfo?.name}
+            processingImage={originalImage || undefined}
           />
 
           {/* Show comparison if we have processed result */}
@@ -303,33 +304,7 @@ export default function HomePage() {
               )}
 
               {/* Processing Animation */}
-              {status === 'processing' && originalImage && (
-                <div className="card bg-base-200 shadow-xl">
-                  <div className="card-body items-center text-center space-y-6">
-                    <div className="relative">
-                      <div className="rounded-box overflow-hidden bg-base-300 max-w-md">
-                        <img
-                          src={originalImage}
-                          alt="Processing"
-                          className="max-w-full opacity-50 animate-pulse-slow"
-                        />
-                      </div>
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="bg-base-100/90 rounded-box p-8 shadow-xl">
-                          <span className="loading loading-spinner loading-lg text-primary"></span>
-                        </div>
-                      </div>
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-bold mb-2">AI 正在处理您的图片</h3>
-                      <p className="text-base-content/60">
-                        {selectedServiceInfo?.name} - 这可能需要几秒钟...
-                      </p>
-                      <progress className="progress progress-primary w-64 mt-4"></progress>
-                    </div>
-                  </div>
-                </div>
-              )}
+              {/* Animation moved to ProcessingStatus component */}
             </>
           )}
 
