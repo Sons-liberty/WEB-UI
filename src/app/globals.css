@@ -1,0 +1,82 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom scrollbar styling */
+@layer utilities {
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-track {
+    @apply bg-base-200 rounded-full;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    @apply bg-base-300 rounded-full;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    @apply bg-neutral;
+  }
+}
+
+/* Alpha/transparent background for matting results */
+.alpha-background {
+  background-color: #fff;
+  background-image:
+    linear-gradient(45deg, #e5e7eb 25%, transparent 25%),
+    linear-gradient(-45deg, #e5e7eb 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #e5e7eb 75%),
+    linear-gradient(-45deg, transparent 75%, #e5e7eb 75%);
+  background-size: 20px 20px;
+  background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+}
+
+/* Dark theme alpha background */
+[data-theme="dark"] .alpha-background {
+  background-color: #1f2937;
+  background-image:
+    linear-gradient(45deg, #374151 25%, transparent 25%),
+    linear-gradient(-45deg, #374151 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #374151 75%),
+    linear-gradient(-45deg, transparent 75%, #374151 75%);
+}
+
+/* Image preview container */
+.image-preview {
+  @apply relative overflow-hidden rounded-box bg-base-200;
+  min-height: 200px;
+}
+
+.image-preview img {
+  @apply w-full h-full object-contain;
+}
+
+/* Drag and drop area */
+.dropzone {
+  @apply border-2 border-dashed border-base-300 rounded-box p-8 text-center cursor-pointer transition-all duration-200;
+}
+
+.dropzone:hover {
+  @apply border-primary bg-base-200;
+}
+
+.dropzone.active {
+  @apply border-primary bg-primary/10;
+}
+
+/* Loading animation */
+@keyframes pulse-slow {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}

@@ -1,0 +1,106 @@
+'use client';
+
+import { ServiceInfo, ServicesResponse } from '@/types';
+
+interface ServiceSelectorProps {
+  services: ServicesResponse | null;
+  selectedService: string | null;
+  onServiceSelect: (serviceId: string) => void;
+  disabled?: boolean;
+}
+
+const categoryIcons = {
+  document: (
+    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+    </svg>
+  ),
+  matting: (
+    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.121 14.121L19 19m-7-7l7-7m-7 7l-2.879 2.879M12 12L9.121 9.121m0 5.758a3 3 0 10-4.243 4.243 3 3 0 004.243-4.243zm0-5.758a3 3 0 10-4.243-4.243 3 3 0 004.243 4.243z" />
+    </svg>
+  ),
+  watermark: (
+    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+    </svg>
+  ),
+};
+
+const categoryNames = {
+  document: '文档处理',
+  matting: '智能抠图',
+  watermark: '去水印',
+};
+
+const categoryColors = {
+  document: 'badge-primary',
+  matting: 'badge-secondary',
+  watermark: 'badge-accent',
+};
+
+export default function ServiceSelector({
+  services,
+  selectedService,
+  onServiceSelect,
+  disabled = false,
+}: ServiceSelectorProps) {
+  if (!services) {
+    return (
+      <div className="flex justify-center p-8">
+        <span className="loading loading-spinner loading-lg text-primary"></span>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      <h2 className="text-2xl font-bold text-base-content mb-4">选择处理类型</h2>
+
+      {Object.entries(services).map(([category, subcategories]) => (
+        <div key={category} className="card bg-base-200 shadow-xl">
+          <div className="card-body">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="text-primary">
+                {categoryIcons[category as keyof typeof categoryIcons]}
+              </div>
+              <h3 className="card-title text-xl">
+                {categoryNames[category as keyof typeof categoryNames]}
+              </h3>
+              <div className={`badge ${categoryColors[category as keyof typeof categoryColors]} badge-lg`}>
+                {Object.values(subcategories).flat().length} 项服务
+              </div>
+            </div>
+
+            {Object.entries(subcategories).map(([subcategory, serviceList]) => (
+              <div key={subcategory} className="space-y-2">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                  {(serviceList as ServiceInfo[]).map((service) => (
+                    <button
+                      key={service.id}
+                      onClick={() => onServiceSelect(service.id)}
+                      disabled={disabled}
+                      className={`btn btn-outline h-auto py-4 px-4 flex-col items-start text-left transition-all ${
+                        selectedService === service.id
+                          ? 'btn-primary shadow-lg scale-105'
+                          : 'hover:scale-102'
+                      } ${disabled ? 'btn-disabled' : ''}`}
+                    >
+                      <div className="font-bold text-base mb-1">{service.name}</div>
+                      <div className="text-xs opacity-70 leading-relaxed">
+                        {service.description}
+                      </div>
+                      {selectedService === service.id && (
+                        <div className="badge badge-primary badge-sm mt-2">已选择</div>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
