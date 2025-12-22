@@ -1,6 +1,7 @@
 'use client';
 
 import { ServiceInfo, ServicesResponse } from '@/types';
+import { useEffect, useRef, useState } from 'react';
 
 interface ServiceSelectorProps {
   services: ServicesResponse | null;
@@ -45,6 +46,29 @@ export default function ServiceSelector({
   onServiceSelect,
   disabled = false,
 }: ServiceSelectorProps) {
+  const [isHeaderSticky, setIsHeaderSticky] = useState(false);
+  const sentinelRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsHeaderSticky(!entry.isIntersecting);
+      },
+      { threshold: [0], rootMargin: '-1px 0px 0px 0px' }
+    );
+
+    const currentSentinel = sentinelRef.current;
+    if (currentSentinel) {
+      observer.observe(currentSentinel);
+    }
+
+    return () => {
+      if (currentSentinel) {
+        observer.unobserve(currentSentinel);
+      }
+    };
+  }, []);
+
   if (!services) {
     return (
       <div className="flex justify-center p-8">
@@ -55,9 +79,24 @@ export default function ServiceSelector({
 
   return (
     <div className="relative space-y-6">
+      {/* Sentinel for sticky detection */}
+      <div ref={sentinelRef} className="absolute top-0 h-1 w-full -z-10" />
+      
       {/* Fixed H2 Header */}
-      <div className="sticky top-0 z-20 bg-base-100/95 backdrop-blur-sm py-4 border-b border-base-200/50 transition-all duration-300">
-        <h2 className="text-2xl font-bold text-base-content">选择处理类型</h2>
+      <div 
+        className={`sticky top-0 z-20 transition-all duration-300 ease-in-out py-4 -mx-4 px-4 sm:mx-0 sm:px-0
+          ${isHeaderSticky 
+            ? 'bg-base-100/80 backdrop-blur-lg shadow-sm border-b border-base-200/50 translate-y-0' 
+            : 'bg-transparent translate-y-0'
+          }`}
+      >
+        <h2 
+          className={`text-2xl font-bold text-base-content transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]
+            ${isHeaderSticky ? 'scale-90 origin-left opacity-90' : 'scale-100 opacity-100'}
+          `}
+        >
+          选择处理类型
+        </h2>
       </div>
 
       {Object.entries(services).map(([category, subcategories]) => (
