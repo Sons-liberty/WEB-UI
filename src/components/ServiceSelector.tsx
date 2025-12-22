@@ -54,14 +54,17 @@ export default function ServiceSelector({
   }
 
   return (
-    <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-base-content mb-4">选择处理类型</h2>
+    <div className="relative space-y-6">
+      {/* Fixed H2 Header */}
+      <div className="sticky top-0 z-20 bg-base-100/95 backdrop-blur-sm py-4 border-b border-base-200/50 transition-all duration-300">
+        <h2 className="text-2xl font-bold text-base-content">选择处理类型</h2>
+      </div>
 
       {Object.entries(services).map(([category, subcategories]) => (
-        <div key={category} className="card bg-base-200 shadow-xl">
-          <div className="card-body">
+        <div key={category} className="card bg-base-200 shadow-xl transition-all duration-300 hover:shadow-2xl">
+          <div className="card-body p-4 sm:p-6">
             <div className="flex items-center gap-3 mb-4">
-              <div className="text-primary">
+              <div className="text-primary transition-transform duration-300 hover:scale-110">
                 {categoryIcons[category as keyof typeof categoryIcons]}
               </div>
               <h3 className="card-title text-xl">
@@ -74,26 +77,40 @@ export default function ServiceSelector({
 
             {Object.entries(subcategories).map(([subcategory, serviceList]) => (
               <div key={subcategory} className="space-y-2">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-1 xl:grid-cols-2 gap-3">
                   {(serviceList as ServiceInfo[]).map((service) => (
-                    <button
-                      key={service.id}
-                      onClick={() => onServiceSelect(service.id)}
-                      disabled={disabled}
-                      className={`btn btn-outline h-auto py-4 px-4 flex-col items-start text-left transition-all ${
-                        selectedService === service.id
-                          ? 'btn-primary shadow-lg scale-105'
-                          : 'hover:scale-102'
-                      } ${disabled ? 'btn-disabled' : ''}`}
-                    >
-                      <div className="font-bold text-base mb-1">{service.name}</div>
-                      <div className="text-xs opacity-70 leading-relaxed">
-                        {service.description}
+                    <div key={service.id} className="group relative w-full">
+                      <button
+                        onClick={() => onServiceSelect(service.id)}
+                        disabled={disabled}
+                        className={`btn btn-outline w-full h-auto py-3 px-4 flex-col items-start text-left transition-all duration-300 ease-in-out ${
+                          selectedService === service.id
+                            ? 'btn-primary shadow-lg scale-102 ring-2 ring-primary ring-offset-2'
+                            : 'hover:scale-102 hover:bg-base-300'
+                        } ${disabled ? 'btn-disabled opacity-50' : ''}`}
+                      >
+                        <div className="font-bold text-base w-full truncate">{service.name}</div>
+                        
+                        {/* Selected Indicator */}
+                        {selectedService === service.id && (
+                          <div className="badge badge-primary badge-sm mt-2 animate-in fade-in zoom-in duration-300">已选择</div>
+                        )}
+                      </button>
+
+                      {/* Floating Tooltip */}
+                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-3 bg-neutral text-neutral-content text-xs rounded-lg shadow-xl 
+                                      opacity-0 invisible
+                                      group-hover:opacity-100 group-hover:visible
+                                      group-focus-within:opacity-100 group-focus-within:visible
+                                      transition-all duration-200 delay-200 ease-out 
+                                      z-30 pointer-events-none text-center">
+                        <div className="relative z-10 font-medium">
+                          {service.description}
+                        </div>
+                        {/* Arrow */}
+                        <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-neutral rotate-45"></div>
                       </div>
-                      {selectedService === service.id && (
-                        <div className="badge badge-primary badge-sm mt-2">已选择</div>
-                      )}
-                    </button>
+                    </div>
                   ))}
                 </div>
               </div>
