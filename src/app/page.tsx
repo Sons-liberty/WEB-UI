@@ -159,55 +159,67 @@ export default function HomePage() {
   };
 
   const selectedServiceInfo = getSelectedServiceInfo();
+  const isWorkspaceActive = !!(selectedService || originalImage);
 
   return (
     <div className="max-w-7xl mx-auto space-y-8">
       {/* Hero Section */}
-      <div className="text-center space-y-4 py-8">
-        <h1 className="text-4xl md:text-5xl font-bold text-base-content">
+      <div 
+        className={`text-center transition-all duration-500 ease-in-out ${
+          isWorkspaceActive 
+            ? 'py-4 space-y-2' 
+            : 'py-8 space-y-4'
+        }`}
+      >
+        <h1 className="text-4xl md:text-5xl font-bold text-base-content transition-all duration-500">
           AI 图像处理工具
         </h1>
-        <p className="text-lg text-base-content/70 max-w-2xl mx-auto">
-          专业的文档处理、智能抠图、去水印服务，让您的图片处理工作更高效
-        </p>
+        
+        <div className={`transition-all duration-500 ease-in-out origin-top ${
+          isWorkspaceActive ? 'scale-95 opacity-80' : 'scale-100 opacity-100'
+        }`}>
+          <p className="text-lg text-base-content/70 max-w-2xl mx-auto">
+            专业的文档处理、智能抠图、去水印服务，让您的图片处理工作更高效
+          </p>
 
-        {serviceHealth === false && (
-          <div className="alert alert-warning shadow-lg max-w-2xl mx-auto">
-            <svg
-              className="stroke-current shrink-0 h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-              />
-            </svg>
-            <span>无法连接到 AI 服务，请确保后端运行在 http://localhost:5000</span>
-          </div>
-        )}
+          {serviceHealth === false && (
+            <div className="alert alert-warning shadow-lg max-w-2xl mx-auto mt-4">
+              <svg
+                className="stroke-current shrink-0 h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                />
+              </svg>
+              <span>无法连接到 AI 服务，请确保后端运行在 http://localhost:5000</span>
+            </div>
+          )}
 
-        {serviceHealth && services && (
-          <div className="flex justify-center gap-4 text-sm">
-            <div className="badge badge-primary badge-lg">
-              {Object.values(services.document || {}).flat().length} 文档服务
+          {serviceHealth && services && (
+            <div className="flex justify-center gap-4 text-sm mt-4">
+              <div className="badge badge-primary badge-lg">
+                {Object.values(services.document || {}).flat().length} 文档服务
+              </div>
+              <div className="badge badge-secondary badge-lg">
+                {Object.values(services.matting || {}).flat().length} 抠图服务
+              </div>
+              <div className="badge badge-accent badge-lg">
+                {Object.values(services.watermark || {}).flat().length} 去水印服务
+              </div>
             </div>
-            <div className="badge badge-secondary badge-lg">
-              {Object.values(services.matting || {}).flat().length} 抠图服务
-            </div>
-            <div className="badge badge-accent badge-lg">
-              {Object.values(services.watermark || {}).flat().length} 去水印服务
-            </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       {/* Main Content */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left Sidebar - Service Selection */}
-        <div className="lg:col-span-1 space-y-6">
+        <div className="space-y-6 lg:sticky lg:top-24 lg:self-start lg:max-h-[calc(100vh-8rem)] lg:overflow-y-auto scrollbar-thin">
           <ServiceSelector
             services={services}
             selectedService={selectedService}
@@ -236,6 +248,7 @@ export default function HomePage() {
             error={error}
             onRetry={handleRetry}
             serviceName={selectedServiceInfo?.name}
+            processingImage={originalImage || undefined}
           />
 
           {/* Show comparison if we have processed result */}
@@ -291,33 +304,7 @@ export default function HomePage() {
               )}
 
               {/* Processing Animation */}
-              {status === 'processing' && originalImage && (
-                <div className="card bg-base-200 shadow-xl">
-                  <div className="card-body items-center text-center space-y-6">
-                    <div className="relative">
-                      <div className="rounded-box overflow-hidden bg-base-300 max-w-md">
-                        <img
-                          src={originalImage}
-                          alt="Processing"
-                          className="max-w-full opacity-50 animate-pulse-slow"
-                        />
-                      </div>
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="bg-base-100/90 rounded-box p-8 shadow-xl">
-                          <span className="loading loading-spinner loading-lg text-primary"></span>
-                        </div>
-                      </div>
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-bold mb-2">AI 正在处理您的图片</h3>
-                      <p className="text-base-content/60">
-                        {selectedServiceInfo?.name} - 这可能需要几秒钟...
-                      </p>
-                      <progress className="progress progress-primary w-64 mt-4"></progress>
-                    </div>
-                  </div>
-                </div>
-              )}
+              {/* Animation moved to ProcessingStatus component */}
             </>
           )}
 
