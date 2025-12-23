@@ -84,7 +84,7 @@ export default function FileUpload({
 
   if (!selectedService) {
     return (
-      <div className="card bg-base-100/50 backdrop-blur-md shadow-xl border border-base-200 transition-all duration-500 ease-out hover:shadow-2xl hover:border-primary/30 group">
+      <div className="card bg-base-100/50 backdrop-blur-md shadow-xl border border-base-200 transition-all duration-500 ease-out hover:shadow-2xl hover:border-primary/30 mt-20 group">
         <div className="card-body items-center text-center py-16">
           <div className="relative mb-8">
             <div className="w-24 h-24 bg-base-200 rounded-full flex items-center justify-center animate-float z-10 relative group-hover:bg-primary/10 transition-colors duration-300">
